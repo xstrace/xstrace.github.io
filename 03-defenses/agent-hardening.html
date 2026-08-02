@@ -1,0 +1,861 @@
+
+<!DOCTYPE HTML>
+<html lang="zh" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Agent 架构加固 · AI/Agent 安全攻防速查手册</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="mcp-security.html" />
+    
+    
+    <link rel="prev" href="guardrails.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    封面与说明
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">01 总体概览与威胁模型</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../01-overview/">
+            
+                <a href="../01-overview/">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../01-overview/threat-model.html">
+            
+                <a href="../01-overview/threat-model.html">
+            
+                    
+                    威胁模型与攻击面
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../01-overview/frameworks.html">
+            
+                <a href="../01-overview/frameworks.html">
+            
+                    
+                    安全框架速查
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">02 攻击技术</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../02-attacks/">
+            
+                <a href="../02-attacks/">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../02-attacks/prompt-injection.html">
+            
+                <a href="../02-attacks/prompt-injection.html">
+            
+                    
+                    提示注入 Prompt Injection
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../02-attacks/jailbreak.html">
+            
+                <a href="../02-attacks/jailbreak.html">
+            
+                    
+                    越狱 Jailbreak
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../02-attacks/tool-poisoning.html">
+            
+                <a href="../02-attacks/tool-poisoning.html">
+            
+                    
+                    工具投毒与 MCP 攻击
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="../02-attacks/rag-vector-attacks.html">
+            
+                <a href="../02-attacks/rag-vector-attacks.html">
+            
+                    
+                    RAG 与向量库攻击
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="../02-attacks/model-poisoning.html">
+            
+                <a href="../02-attacks/model-poisoning.html">
+            
+                    
+                    模型与数据投毒
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="../02-attacks/agent-attacks.html">
+            
+                <a href="../02-attacks/agent-attacks.html">
+            
+                    
+                    Agent 专属攻击
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="../02-attacks/supply-chain.html">
+            
+                <a href="../02-attacks/supply-chain.html">
+            
+                    
+                    供应链攻击
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.9" data-path="../02-attacks/disclosure-leakage.html">
+            
+                <a href="../02-attacks/disclosure-leakage.html">
+            
+                    
+                    信息泄露与提示词窃取
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.10" data-path="../02-attacks/abuse-dos.html">
+            
+                <a href="../02-attacks/abuse-dos.html">
+            
+                    
+                    滥用与成本攻击
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">03 防御技术</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="input-sanitization.html">
+            
+                <a href="input-sanitization.html">
+            
+                    
+                    输入防护与净化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="context-isolation.html">
+            
+                <a href="context-isolation.html">
+            
+                    
+                    上下文隔离
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="guardrails.html">
+            
+                <a href="guardrails.html">
+            
+                    
+                    Guardrails 护栏体系
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.5" data-path="agent-hardening.html">
+            
+                <a href="agent-hardening.html">
+            
+                    
+                    Agent 架构加固
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="mcp-security.html">
+            
+                <a href="mcp-security.html">
+            
+                    
+                    MCP 生态安全
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="monitoring-detection.html">
+            
+                <a href="monitoring-detection.html">
+            
+                    
+                    监控与检测
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="red-teaming.html">
+            
+                <a href="red-teaming.html">
+            
+                    
+                    红队评估与测试
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">04 工具速查</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../04-tools/">
+            
+                <a href="../04-tools/">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../04-tools/redteam-tools.html">
+            
+                <a href="../04-tools/redteam-tools.html">
+            
+                    
+                    红队测试工具
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../04-tools/guardrail-tools.html">
+            
+                <a href="../04-tools/guardrail-tools.html">
+            
+                    
+                    Guardrails 工具
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../04-tools/mcp-agent-tools.html">
+            
+                <a href="../04-tools/mcp-agent-tools.html">
+            
+                    
+                    MCP / Agent 安全工具
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../04-tools/detection-tools.html">
+            
+                <a href="../04-tools/detection-tools.html">
+            
+                    
+                    检测与防护服务
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">05 真实攻击案例</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../05-incidents/">
+            
+                <a href="../05-incidents/">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../05-incidents/case-summary.html">
+            
+                <a href="../05-incidents/case-summary.html">
+            
+                    
+                    案例总览
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="../05-incidents/key-cases.html">
+            
+                <a href="../05-incidents/key-cases.html">
+            
+                    
+                    典型案例复盘
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">06 实战速查</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="../06-playbook/">
+            
+                <a href="../06-playbook/">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.2" data-path="../06-playbook/attack-playbook.html">
+            
+                <a href="../06-playbook/attack-playbook.html">
+            
+                    
+                    攻击速查表
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.3" data-path="../06-playbook/defense-checklist.html">
+            
+                <a href="../06-playbook/defense-checklist.html">
+            
+                    
+                    防御检查清单
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="7.4" data-path="../06-playbook/incident-response.html">
+            
+                <a href="../06-playbook/incident-response.html">
+            
+                    
+                    应急响应流程
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">07 参考资源</li>
+        
+        
+    
+        <li class="chapter " data-level="8.1" data-path="../07-resources/">
+            
+                <a href="../07-resources/">
+            
+                    
+                    章节介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            本書使用 HonKit 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Agent 架构加固</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="agent-架构加固">Agent 架构加固</h1>
+<blockquote>
+<p>核心：<strong>最小自主（Least Agency）</strong>——比最小权限更进一步：即使权限最小的 Agent，若可无检查行动也能造成危害。</p>
+</blockquote>
+<h2 id="1-agent-权限策略文件示例（yaml）">1. Agent 权限策略文件示例（YAML）</h2>
+<pre><code class="lang-yaml"><span class="hljs-comment"># agent-policies.yaml</span>
+<span class="hljs-attr">agents:</span>
+  <span class="hljs-attr">invoice_agent:</span>
+    <span class="hljs-attr">identity:</span> <span class="hljs-string">"entra-id:invoice-agent@corp"</span>     <span class="hljs-comment"># 每 Agent 独立身份（NHI）</span>
+    <span class="hljs-attr">credentials:</span> <span class="hljs-string">short_lived_tokens(ttl=15min)</span>   <span class="hljs-comment"># 短时凭证</span>
+    <span class="hljs-attr">allowed_tools:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">read:</span> [<span class="hljs-string">invoice_db.query</span>, <span class="hljs-string">outlook.read</span>]   <span class="hljs-comment"># 读工具</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">write:</span> []                                 <span class="hljs-comment"># 无写权限</span>
+    <span class="hljs-attr">requires_approval:</span>                           <span class="hljs-comment"># HITL 清单</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">any_outbound_http</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">send_email</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">delete_*</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">external_share</span>
+    <span class="hljs-attr">egress:</span> <span class="hljs-string">deny_by_default</span>                      <span class="hljs-comment"># 默认拒绝出网</span>
+    <span class="hljs-attr">rate_limit:</span> { <span class="hljs-attr">calls_per_min:</span> <span class="hljs-number">30</span> }
+    <span class="hljs-attr">sandbox:</span> { <span class="hljs-attr">type:</span> <span class="hljs-string">docker</span>, <span class="hljs-attr">net:</span> <span class="hljs-string">none</span> }         <span class="hljs-comment"># 沙箱 + 无网络</span>
+    <span class="hljs-attr">max_steps:</span> <span class="hljs-number">20</span>                                <span class="hljs-comment"># 会话步骤上限</span>
+    <span class="hljs-attr">memory:</span> { <span class="hljs-attr">persistent:</span> <span class="hljs-literal">false</span> }                <span class="hljs-comment"># 临时上下文</span>
+
+  <span class="hljs-attr">coding_agent:</span>
+    <span class="hljs-attr">identity:</span> <span class="hljs-string">"entra-id:code-agent@corp"</span>
+    <span class="hljs-attr">allowed_tools:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">read:</span> [<span class="hljs-string">repo.read</span>, <span class="hljs-string">search</span>]
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">write:</span> [<span class="hljs-string">repo.commit_with_review</span>]
+    <span class="hljs-attr">requires_approval:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">exec_shell</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">apply_patch_to_prod</span>
+    <span class="hljs-attr">sandbox:</span> { <span class="hljs-attr">type:</span> <span class="hljs-string">container</span>, <span class="hljs-attr">net:</span> <span class="hljs-string">allowlist</span>[<span class="hljs-string">registry.corp.com</span>] }
+</code></pre>
+<h2 id="2-hitl-审批实现要点">2. HITL 审批实现要点</h2>
+<pre><code class="lang-python"><span class="hljs-comment"># 强制交互式确认（不可被 Agent API 绕过）</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">action: <span class="hljs-built_in">dict</span></span>) -&gt; <span class="hljs-built_in">bool</span>:
+    ticket = create_approval_ticket(action)   <span class="hljs-comment"># 每次动作独立票据</span>
+    <span class="hljs-comment"># ❌ 错误做法：一次审批授权整个会话</span>
+    <span class="hljs-comment"># ✅ 正确做法：每动作独立 + 强制用户交互（扫码/双因素）</span>
+    <span class="hljs-keyword">return</span> user_confirms_interactively(ticket.<span class="hljs-built_in">id</span>, action.summary)
+
+<span class="hljs-comment"># 分级审批</span>
+LEVELS = {
+    <span class="hljs-string">"low"</span>:    <span class="hljs-keyword">lambda</span> a: auto_allow(a),                 <span class="hljs-comment"># 只读/无害</span>
+    <span class="hljs-string">"medium"</span>: <span class="hljs-keyword">lambda</span> a: single_approval(a),            <span class="hljs-comment"># 一人确认</span>
+    <span class="hljs-string">"high"</span>:   <span class="hljs-keyword">lambda</span> a: dual_approval(a),              <span class="hljs-comment"># 双人确认</span>
+    <span class="hljs-string">"critical"</span>: <span class="hljs-keyword">lambda</span> a: manual_execution(a),         <span class="hljs-comment"># 人工亲自执行</span>
+}
+</code></pre>
+<h2 id="3-身份与授权外置（complete-mediation）">3. 身份与授权外置（Complete Mediation）</h2>
+<pre><code class="lang-python"><span class="hljs-comment"># ❌ 错误：让模型判断权限（模型可被注入说服）</span>
+<span class="hljs-comment"># ✅ 正确：确定性代码根据认证用户判定</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">can_execute</span>(<span class="hljs-params">user: User, agent: Agent, tool: <span class="hljs-built_in">str</span>, args: <span class="hljs-built_in">dict</span></span>) -&gt; <span class="hljs-built_in">bool</span>:
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> authenticate(user):                      <span class="hljs-comment"># 认证</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">if</span> tool <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> agent.allowlist:                 <span class="hljs-comment"># Agent 范围</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> user_has_permission(user, tool, args):   <span class="hljs-comment"># 用户权限（RBAC）</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+<span class="hljs-comment"># 模型只能"请求"，决定权在代码</span>
+</code></pre>
+<h2 id="4-沙箱执行示例">4. 沙箱执行示例</h2>
+<pre><code class="lang-bash"><span class="hljs-comment"># Docker 沙箱：无网络 + 只读挂载</span>
+docker run --<span class="hljs-built_in">rm</span> \
+  --network none \
+  -v /workspace:/work:ro \
+  -v /tmp/agent-cache:/cache \
+  --memory 512m --cpus 1 \
+  --read-only \
+  agent-runtime python run_task.py
+
+<span class="hljs-comment"># 编码 Agent 代码执行沙箱</span>
+<span class="hljs-comment"># 禁止直接执行 LLM 生成的 shell 命令；强制走代码审查 + 沙箱 CI</span>
+</code></pre>
+<h2 id="5-工具调用治理配置">5. 工具调用治理配置</h2>
+<pre><code class="lang-python"><span class="hljs-comment"># 参数强校验（类型+范围+枚举），防参数注入</span>
+SCHEMAS = {
+    <span class="hljs-string">"send_email"</span>: {
+        <span class="hljs-string">"recipient"</span>: {<span class="hljs-string">"type"</span>: <span class="hljs-string">"email"</span>, <span class="hljs-string">"allowlist"</span>: [<span class="hljs-string">"@corp.com"</span>]},
+        <span class="hljs-string">"body"</span>:      {<span class="hljs-string">"type"</span>: <span class="hljs-string">"str"</span>, <span class="hljs-string">"max_len"</span>: <span class="hljs-number">5000</span>},
+        <span class="hljs-string">"attachments"</span>: {<span class="hljs-string">"type"</span>: <span class="hljs-string">"list"</span>, <span class="hljs-string">"max_items"</span>: <span class="hljs-number">5</span>,
+                        <span class="hljs-string">"allowed_ext"</span>: [<span class="hljs-string">".pdf"</span>, <span class="hljs-string">".csv"</span>]},
+    }
+}
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">validate_params</span>(<span class="hljs-params">tool, args</span>):
+    schema = SCHEMAS.get(tool)
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> schema: <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>          <span class="hljs-comment"># 未登记工具 → 拒绝</span>
+    <span class="hljs-keyword">return</span> jsonschema.validate(args, schema)  <span class="hljs-comment"># 严格校验</span>
+
+<span class="hljs-comment"># 读/写分离：读工具与写工具分开注册、分开授权</span>
+<span class="hljs-comment"># 跨信任域移动（Drive→Slack、CRM→邮件、密钥库→任何）→ 强制审批</span>
+</code></pre>
+<h2 id="6-部署前检查（microsoft-2026-提炼）">6. 部署前检查（Microsoft 2026 提炼）</h2>
+<pre><code>□ 治理工具供应链：发布者/服务器租户级白名单，关闭 Allow-all
+□ 工具描述当系统提示管理：变更审查 + 指令性语言扫描
+□ 高影响动作人工审批（执行前）
+□ Agent 独立身份 + 条件访问（Entra Agent ID 等）
+□ 行为基线 + 日志关联（新端点/扩参数/异常查询告警）
+□ 部署前红队演练（promptfoo/PyRIT 跑目标劫持与工具滥用场景）
+</code></pre>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="guardrails.html" class="navigation navigation-prev " aria-label="Previous page: Guardrails 护栏体系">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="mcp-security.html" class="navigation navigation-next " aria-label="Next page: MCP 生态安全">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Agent 架构加固","level":"4.5","depth":1,"next":{"title":"MCP 生态安全","level":"4.6","depth":1,"path":"03-defenses/mcp-security.md","ref":"03-defenses/mcp-security.md","articles":[]},"previous":{"title":"Guardrails 护栏体系","level":"4.4","depth":1,"path":"03-defenses/guardrails.md","ref":"03-defenses/guardrails.md","articles":[]},"dir":"ltr"},"config":{"plugins":[],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"AI/Agent 安全攻防速查手册","language":"zh","gitbook":"*","description":"面向安全工程师的 AI / Agent 攻击与防御技术速查手册（Prompt Injection、Jailbreak、MCP Tool Poisoning、Agent Security 等），持续跟踪 GitHub 与互联网最新攻防动态。"},"file":{"path":"03-defenses/agent-hardening.md","mtime":"2026-08-02T07:58:44.210Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-08-02T07:59:17.277Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
