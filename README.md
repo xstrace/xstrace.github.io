@@ -30,7 +30,7 @@
 
 ## 在线访问
 
-公开页面：<https://xstrace.github.io/ai-security-handbook/>
+公开页面：<https://xstrace.github.io/>
 
 ## 如何更新
 
