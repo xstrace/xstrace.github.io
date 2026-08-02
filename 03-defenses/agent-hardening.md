@@ -1,52 +1,120 @@
 # Agent 架构加固
 
-> Agent 安全的本质：**最小自主（Least Agency）**，不只是最小权限（Least Privilege）。即使权限最小的 Agent，若被允许不受检查地行动，也可能造成危害（Microsoft 2026 警告）。
+> 核心：**最小自主（Least Agency）**——比最小权限更进一步：即使权限最小的 Agent，若可无检查行动也能造成危害。
 
-## 1. 权限模型
+## 1. Agent 权限策略文件示例（YAML）
 
-- **每 Agent 独立身份**（非人身份 NHI）：Microsoft Entra Agent ID 等；代理执行的操作归属到 Agent 身份，可审计、可撤销
-- **短时凭证**：Agent 用短时 scoped credentials，而非长期令牌
-- **工具最小范围**：每个工具只授权任务所需最小范围（日历工具不需要仓库访问权；仓库搜索不需要 Slack 写权限）
-- **显式委托**：授权必须显式声明，Agent 不得自行扩大权限
-- **身份与授权外置**：是否允许某操作由确定性代码根据认证用户判定，不由模型解读上下文决定（Complete Mediation）
+```yaml
+# agent-policies.yaml
+agents:
+  invoice_agent:
+    identity: "entra-id:invoice-agent@corp"     # 每 Agent 独立身份（NHI）
+    credentials: short_lived_tokens(ttl=15min)   # 短时凭证
+    allowed_tools:
+      - read: [invoice_db.query, outlook.read]   # 读工具
+      - write: []                                 # 无写权限
+    requires_approval:                           # HITL 清单
+      - any_outbound_http
+      - send_email
+      - delete_*
+      - external_share
+    egress: deny_by_default                      # 默认拒绝出网
+    rate_limit: { calls_per_min: 30 }
+    sandbox: { type: docker, net: none }         # 沙箱 + 无网络
+    max_steps: 20                                # 会话步骤上限
+    memory: { persistent: false }                # 临时上下文
 
-## 2. 工具调用治理
+  coding_agent:
+    identity: "entra-id:code-agent@corp"
+    allowed_tools:
+      - read: [repo.read, search]
+      - write: [repo.commit_with_review]
+    requires_approval:
+      - exec_shell
+      - apply_patch_to_prod
+    sandbox: { type: container, net: allowlist[registry.corp.com] }
+```
 
-- **关闭 Allow-all**：只启用具体工具（Microsoft 明确要求）
-- **参数 schema 强校验**：类型 + 范围 + 值验证（防参数注入）
-- **读/写工具分离**：读工具与写工具分开授权
-- **跨信任域移动需审批**：Drive→Slack、私有仓库→外部 API、CRM→邮件、密钥库→任何
-- **工具调用速率限制 + 审计日志**（含完整参数）
-- **敏感操作不可自动化确认**：写操作默认要求人工确认
+## 2. HITL 审批实现要点
 
-## 3. 人机协同（Human-in-the-Loop）
+```python
+# 强制交互式确认（不可被 Agent API 绕过）
+def approve(action: dict) -> bool:
+    ticket = create_approval_ticket(action)   # 每次动作独立票据
+    # ❌ 错误做法：一次审批授权整个会话
+    # ✅ 正确做法：每动作独立 + 强制用户交互（扫码/双因素）
+    return user_confirms_interactively(ticket.id, action.summary)
 
-- 高影响动作（转账、外发、删除、账户变更）强制人工批准——**执行前**审批，非事后审查
-- 确认 UI 必须"强制交互"（不可被 Agent 用 API 绕过，ASI09 防护）
-- 分级审批：按影响分级（低/中/高）
-- 防确认疲劳：批量无害请求合并展示
-- 防自动化偏见：明确"Agent 建议 ≠ 已核实事实"的提示与培训
+# 分级审批
+LEVELS = {
+    "low":    lambda a: auto_allow(a),                 # 只读/无害
+    "medium": lambda a: single_approval(a),            # 一人确认
+    "high":   lambda a: dual_approval(a),              # 双人确认
+    "critical": lambda a: manual_execution(a),         # 人工亲自执行
+}
+```
 
-## 4. 沙箱与执行环境
+## 3. 身份与授权外置（Complete Mediation）
 
-- Agent 执行在隔离环境（VM/Docker/云沙箱）
-- 默认拒绝出网（deny-by-default egress）；出站需代理/白名单
-- 文件系统/网络/凭据访问按需挂载
-- 编码 Agent：代码在沙箱中运行，禁止直接执行 LLM 生成的 shell 命令（或强制确认）
-- 工具响应解析：结构化解析（JSON schema），不拼接执行
+```python
+# ❌ 错误：让模型判断权限（模型可被注入说服）
+# ✅ 正确：确定性代码根据认证用户判定
+def can_execute(user: User, agent: Agent, tool: str, args: dict) -> bool:
+    if not authenticate(user):                      # 认证
+        return False
+    if tool not in agent.allowlist:                 # Agent 范围
+        return False
+    if not user_has_permission(user, tool, args):   # 用户权限（RBAC）
+        return False
+    return True
+# 模型只能"请求"，决定权在代码
+```
 
-## 5. 目标与计划约束
+## 4. 沙箱执行示例
 
-- 计划白名单：允许的动作集合（ASI01 防护）
-- 目标范围校验：Agent 计划偏离原始任务范围即拒绝
-- 工具过滤器：先定任务所需工具集，再看数据
-- 终止开关（kill switch）：失控即停
+```bash
+# Docker 沙箱：无网络 + 只读挂载
+docker run --rm \
+  --network none \
+  -v /workspace:/work:ro \
+  -v /tmp/agent-cache:/cache \
+  --memory 512m --cpus 1 \
+  --read-only \
+  agent-runtime python run_task.py
 
-## 6. 运行时防御建议清单（Microsoft 2026 提炼）
+# 编码 Agent 代码执行沙箱
+# 禁止直接执行 LLM 生成的 shell 命令；强制走代码审查 + 沙箱 CI
+```
 
-1. 治理工具供应链：发布者/服务器租户级白名单
-2. 工具描述当系统提示管理：变更审查、指令性语言扫描
-3. 高影响动作人工审批
-4. Agent 独立身份 + 条件访问
-5. 行为基线 + Sentinel/日志关联：新端点、扩参数、异常查询告警
-6. 部署前红队演练
+## 5. 工具调用治理配置
+
+```python
+# 参数强校验（类型+范围+枚举），防参数注入
+SCHEMAS = {
+    "send_email": {
+        "recipient": {"type": "email", "allowlist": ["@corp.com"]},
+        "body":      {"type": "str", "max_len": 5000},
+        "attachments": {"type": "list", "max_items": 5,
+                        "allowed_ext": [".pdf", ".csv"]},
+    }
+}
+
+def validate_params(tool, args):
+    schema = SCHEMAS.get(tool)
+    if not schema: return False          # 未登记工具 → 拒绝
+    return jsonschema.validate(args, schema)  # 严格校验
+
+# 读/写分离：读工具与写工具分开注册、分开授权
+# 跨信任域移动（Drive→Slack、CRM→邮件、密钥库→任何）→ 强制审批
+```
+
+## 6. 部署前检查（Microsoft 2026 提炼）
+
+```
+□ 治理工具供应链：发布者/服务器租户级白名单，关闭 Allow-all
+□ 工具描述当系统提示管理：变更审查 + 指令性语言扫描
+□ 高影响动作人工审批（执行前）
+□ Agent 独立身份 + 条件访问（Entra Agent ID 等）
+□ 行为基线 + 日志关联（新端点/扩参数/异常查询告警）
+□ 部署前红队演练（promptfoo/PyRIT 跑目标劫持与工具滥用场景）
+```

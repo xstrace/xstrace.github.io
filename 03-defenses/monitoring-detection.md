@@ -1,52 +1,113 @@
 # 监控与检测
 
-> 注入无法 100% 阻止 → 检测必须跟上：在分钟级发现被控 Agent，而不是数周后的事故复盘。
+> 注入无法 100% 阻止 → 检测必须在分钟级发现。以下为可直接落地的规则与命令。
 
-## 1. 检测的四个层面
+## 1. 行为基线 + 偏离告警
 
-| 层面 | 检测内容 | 工具示例 |
+```yaml
+# agent-behavior-baseline.yaml（每 Agent 一份）
+baseline:
+  agent: invoice_agent
+  learned_from: 30d_traffic
+  tools:
+    invoice_db.query:  { avg_per_day: 120, max_per_day: 400 }
+    outlook.read:      { avg_per_day: 60,  max_per_day: 200 }
+  outbound_endpoints: [api.corp.com, gate.corp.com]
+  param_patterns:
+    invoice_db.query:  "SELECT ... WHERE id = <int>"   # 正常参数形态
+  max_data_rows_per_call: 1000
+alerts:
+  new_outbound_endpoint:          { severity: high }
+  tool_call_volume_spike_x5:      { severity: high }
+  param_shape_change:             { severity: medium }  # SQL 突然全表
+  cross_tool_unexpected_chain:    { severity: high }    # 未预测的级联
+  approval_mismatch:              { severity: high }    # 执行≠审批内容
+```
+
+```python
+# 跨调用相关性检测（会话依赖图简化版）
+def check_unexpected_chain(session, next_call):
+    expected = predict_next_calls(session.task_plan)   # 模型任务计划预测
+    if next_call not in expected:
+        alert("Unexpected tool call chain",
+              f"{session.id}: {next_call} not in plan")
+        return "block"          # 高置信拦截
+    return "log"
+```
+
+## 2. 外泄检测规则（可直接部署）
+
+```python
+# 输出/工具参数侧检测
+import re, base64
+
+SECRET_PATTERNS = [
+    r"sk-[A-Za-z0-9]{20,}",                      # OpenAI key
+    r"AIza[0-9A-Za-z\-_]{35}",                   # Google key
+    r"AKIA[0-9A-Z]{16}",                         # AWS access key
+    r"-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY", # 私钥
+    r"ghp_[0-9A-Za-z]{36}",                      # GitHub PAT
+    r"xox[baprs]-[0-9A-Za-z-]{10,}",             # Slack token
+    r"\b\d{16}\b",                               # 信用卡
+]
+
+def is_base64_blob(s, min_len=80):               # 加密外泄（高熵检测）
+    try:
+        d = base64.b64decode(s, validate=True)
+        return len(d) >= min_len
+    except Exception:
+        return False
+
+def scan_exfil(text):
+    hits = [p for p in SECRET_PATTERNS if re.search(p, text)]
+    entropy_hits = [t for t in split_tokens(text) if is_base64_blob(t)]
+    return {"secrets": hits, "encoded_blobs": len(entropy_hits)}
+```
+
+## 3. 检测四层速查
+
+| 层 | 检测内容 | 工具/方法 |
 |---|---|---|
-| 输入层 | 越狱/注入模式 | Prompt Guard 2、LLM Guard、Lakera |
-| 行为层 | 工具调用异常序列 | Sentinel 关联、行为基线 |
-| 数据层 | 外泄模式 | DLP、输出过滤器、高熵检测 |
-| 事后层 | 会话取证 | 完整日志（prompts/tool calls/outputs） |
+| 输入层 | 越狱/注入 | Prompt Guard 2、LLM Guard、Lakera |
+| 行为层 | 工具调用异常 | 基线偏离、依赖图（上文） |
+| 数据层 | 外泄模式 | 密钥正则、高熵、DLP |
+| 事后层 | 会话取证 | 全量日志（prompts/元数据/调用/输出） |
 
-## 2. 行为基线（Behavioral Baseline）
+## 4. 日志与取证要求
 
-- 建立每个 Agent 的"正常"行为画像：常用工具、调用频率、参数模式、目标端点
-- 偏离告警：
-  - 新端点（Agent 开始联系的外部主机）
-  - 扩大的参数（更大的数据拉取）
-  - 异常查询序列（未预测的级联工具调用）
-  - 非工作时间行为
-- Microsoft 建议：Sentinel 中建立基线，偏离即告警
+```python
+# 关键：记录"调用发生时可见的工具元数据版本"（不是当前版本！）
+log_entry = {
+    "ts": now(),
+    "agent": agent_id,
+    "user": user_id,
+    "task": task_hash,
+    "tool_call": {"tool": name, "args": full_args},
+    "tool_metadata_fp": fingerprint_at_call_time,   # ← 溯源关键
+    "retrieved_docs": [doc_ids],
+    "output_hash": sha256(response),
+    "decision_path": trace_id,
+}
+# 日志脱敏在写入时执行（PII/密钥），非读取时
+```
 
-## 3. 外泄检测（Exfiltration Detection）
+## 5. 告警运营建议
 
-- **输出侧**：密钥格式匹配、PII 识别、base64/高熵块检测（加密外泄尝试）
-- **DLP**：检查工具调用参数中的敏感数据（出站载荷拦截）
-- **跨调用相关性**：会话依赖图——"哪个数据流入了哪个调用"
-- **Canary 数据**：植入诱饵数据，检测其移动
-- 体积异常：批量拉取/导出识别
+```
+□ 精确类（密钥/越狱字符串/新端点）→ block 或立即告警
+□ 模糊类（语义违规/参数形态变化）→ log-and-alert（误报代价权衡）
+□ 阈值按基线而非固定值（正常流量无特征，靠偏离检测）
+□ 检测系统自身定期红队验证（检测也有盲区）
+□ 事件复盘按"工具调用时间线"，非仅最终输出
+□ 关联：MCP 服务器遥测 + Agent 行为 + 网络层（Sentinel 类 SIEM 集成）
+```
 
-## 4. 异常检测方法
+## 6. 最小可部署监控包
 
-- **统计基线**：token 用量、调用次数、延迟分布（兼防成本攻击）
-- **决策依赖图**（MindGuard）：注意力异常（见 MCP 安全）
-- **图异常检测**：调用图/数据流图中未预期的边
-- **LLM 判断器**：抽样判定响应中指令性内容
-- 分类器 + 规则组合：确定性规则（精确，便宜）+ 语义分类器（模糊，稍贵）
-
-## 5. 日志与取证要求
-
-- 记录：prompts、检索文档、工具元数据（当时的可见版本！）、工具调用（全参数）、输出、决策路径
-- 日志脱敏在写入时执行（PII/密钥）
-- 审计日志即证据链（Purview 审计、Cloud Apps 端点发现）
-- 遥测关联：MCP 服务器遥测 + Agent 行为信号 + 网络层
-
-## 6. 运营建议
-
-- 模糊类别 log-and-alert；精确类别 block
-- 告警阈值按误报代价设定（阻断合法用户也是事故）
-- 定期红队验证检测覆盖（检测系统本身需要测试）
-- 事件响应时按"工具调用时间线"复盘，而非仅看最终输出
+```
+1. 密钥/高熵输出检测（上文正则，输出侧 + 工具参数侧）
+2. 每 Agent 行为基线（工具/端点/参数形态）
+3. 新端点 + 调用量激增 + 跨调用异常链告警
+4. 全量调用日志（含元数据指纹）
+5. 成本/token 用量看板（防无界消耗）
+```
