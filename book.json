@@ -1,0 +1,9 @@
+{
+  "title": "AI/Agent 安全攻防速查手册",
+  "description": "面向安全工程师的 AI / Agent 攻击与防御技术速查手册（Prompt Injection、Jailbreak、MCP Tool Poisoning、Agent Security 等），持续跟踪 GitHub 与互联网最新攻防动态。",
+  "language": "zh",
+  "structure": {
+    "readme": "README.md",
+    "summary": "SUMMARY.md"
+  }
+}
