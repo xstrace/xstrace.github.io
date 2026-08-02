@@ -28,6 +28,18 @@
 6. [实战速查清单](06-playbook/README.md)
 7. [参考资源](07-resources/README.md)
 
+## 在线访问
+
+公开页面：<https://xstrace.github.io/ai-security-handbook/>
+
+## 如何更新
+
+1. 编辑本仓库 `main` 分支中的 Markdown 源文件（章节位于 `01-overview` ~ `07-resources`，目录结构在 `SUMMARY.md`）
+2. 推送 `main` 分支
+3. 部署方式：
+   - **自动（推荐）**：先执行 `gh auth refresh -h github.com -s workflow` 授权后推送 `.github/workflows/gitbook-pages.yml`，此后每次 push 自动用 HonKit 构建并发布到 GitHub Pages
+   - **手动**：本地 `npx honkit build` 后将 `_book/` 内容推送到 `gh-pages` 分支
+
 ## 免责声明
 
 本手册仅用于安全研究与防御教育目的。未经授权对他人系统进行攻击测试可能违反法律法规，请务必在授权范围内使用。
