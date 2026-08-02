@@ -111,3 +111,12 @@ log_entry = {
 4. 全量调用日志（含元数据指纹）
 5. 成本/token 用量看板（防无界消耗）
 ```
+
+## 7. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| 提示泄露监测（AWS 官方指南） | aws.amazon.com/blogs/security/designing-for-the-inevitable-system-prompt-leakage |
+| 成本滥用监控（LoopLLM/ThinkTrap 防御方向） | arxiv.org/abs/2511.07876 · arxiv.org/abs/2512.07086 |
+| 行为基线（Wraith 越狱实战指南） | wraith.sh/learn/llm-jailbreak-guide |
+| MITRE ATLAS 检测技术 | atlas.mitre.org |

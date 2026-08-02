@@ -152,3 +152,13 @@ LLM Guard（每请求：注入/PII/密钥/毒性）
 □ 所有护栏定义明确"误报代价"与"责任人"
 □ 固定红队节奏验证护栏（基准在对抗压力下都会退化）
 ```
+
+## 7. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| NeMo Guardrails（NVIDIA） | github.com/NVIDIA/NeMo-Guardrails |
+| Guardrails AI | github.com/guardrails-ai/guardrails |
+| LLM Guard（Protect AI） | github.com/protectai/llm-guard |
+| Llama Guard 4 | llama.com/trust-and-safety |
+| OWASP Guardrails 指南 | genai.owasp.org |

@@ -119,3 +119,14 @@ grep -r "mcpServers" ~/.config/*/config.json 2>/dev/null
 7. 为使用过不可信/近期变更工具的 Agent 轮换凭证
 8. 部署指纹 + 漂移阻断（上文脚本）
 ```
+
+## 7. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| SHIELDMCP（工具元数据安全框架） | arxiv.org（SHIELDMCP） |
+| SAFE-MCP 规范（Cloudflare） | github.com/cloudflare/safe-mcp |
+| MCP 安全危机（CSA 2026.05） | cloudsecurityalliance.org |
+| OWASP MCP Top 10 | genai.owasp.org |
+| MCP 官方安全文档 | modelcontextprotocol.io |
+| VulnerableMCP（靶场） | github.com/mcpdojo/VulnerableMCP |

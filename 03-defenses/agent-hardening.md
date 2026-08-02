@@ -118,3 +118,13 @@ def validate_params(tool, args):
 □ 行为基线 + 日志关联（新端点/扩参数/异常查询告警）
 □ 部署前红队演练（promptfoo/PyRIT 跑目标劫持与工具滥用场景）
 ```
+
+## 7. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| 微软 Agent 安全策略（2026 指南） | microsoft.com/security/blog（agentic AI 安全系列） |
+| OWASP Agentic Top 10（最小自主 ASI05 等） | genai.owasp.org/agentic-top-10 |
+| MITRE ATLAS（Agent 威胁矩阵） | atlas.mitre.org |
+| 最小自主原则（Least Agency） | 微软安全博客（agentic security） |
+| MAESTRO 威胁建模（CSA） | cloudsecurityalliance.org |

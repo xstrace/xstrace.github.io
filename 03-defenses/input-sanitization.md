@@ -135,3 +135,13 @@ sim = model.encode(attack_pattern).dot(model.encode(user_input))
 □ 净化而非仅检测：PII 匿名化、密钥遮蔽后再入上下文
 □ 输入过滤是"减震器"不是"防火墙"——后续层必须跟上
 ```
+
+## 7. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| LLM Guard（Protect AI） | github.com/protectai/llm-guard |
+| Meta Prompt Guard 2 | github.com/meta-llama/Prompt-Guard-2 |
+| Lakera 输入检测 | lakera.ai |
+| CASCADE 攻击分类法 | arxiv.org（CASCADE: classifying attack taxonomy） |
+| 注入检测评测（ACL 2026） | aclanthology.org/2026.findings-acl.20.pdf |

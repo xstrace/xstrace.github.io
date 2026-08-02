@@ -151,3 +151,16 @@ python -m agentdojo --model gpt-4o
 □ hackthebox / 各大云厂商的 AI 安全实验室（按需）
 □ 自己搭：AgentDojo 环境 + 注入文档（本手册 payload 库）
 ```
+
+## 8. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| garak | github.com/NVIDIA/garak |
+| promptfoo redteam | github.com/promptfoo/promptfoo · promptfoo.dev/docs/red-team |
+| PyRIT（微软） | github.com/Azure/PyRIT |
+| AgentDojo 基准 | github.com/ethz-spylab/agentdojo |
+| RAMPART | github.com/johnjhacking/rampart |
+| MITRE ATLAS | atlas.mitre.org |
+| 越狱/注入实时情报 | jailbreakdb.com · promptinjection.report |
+| 红队策略索引（promptfoo） | promptfoo.dev/docs/red-team/strategies |

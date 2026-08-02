@@ -100,3 +100,12 @@ result = actor_llm.act(summary)           # 执行层看不到原始载荷
 推荐组合：定界符 + 双 LLM 隔离 + 工具过滤 + 输出校验（纵深）
 终极方案：沙箱执行 + 动作层授权（见 agent-hardening）——即使注入成功也无爆炸半径
 ```
+
+## 8. 参考链接
+
+| 内容 | 链接 |
+|---|---|
+| AgentDojo（防御有效性实证基准） | github.com/ethz-spylab/agentdojo |
+| 角色混淆理论（为什么定界符不够，2026） | arxiv.org/abs/2603.12277 |
+| Simon Willison：提示注入与隔离策略 | simonwillison.net |
+| 检索屏障克服（隔离失效实证） | usenix.org（sec26_prepub_chang.pdf） |
